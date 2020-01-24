@@ -1,56 +1,78 @@
-#!/bin/bash -x 
-
-#Declaring dictionary or variables
-declare -A FlipCoin_Result
-head=0;
-tail=0;
-
+#!/bin/bash 
 
 echo "Welcome to Flip Coin Simulator"
 
-read -p "Enter the number to flip a coin: " time
 
-#function for flip a coin
-function flipACoin()
+#Function to get the input from user
+function getInput()
 {
-	for((i=1;i<=time;i++))
+	local play=0
+	read -p  "Do You Want to Play if yes then press 'Y' else press any other key" play
+	while [ $play == 'y' ]
 	do
-		random=$((RANDOM % 2))
+		read -p "Enter how many times you want to flip a coin: " noOfFlip
+		echo -e "1.One Coin \n2.Two Coin"
+		read -p "Enter your choice: " ch
 
-		if [ $random -eq 0 ]
-		then
-				FlipCoin_Result[result$((i+1))]="Head"
-		else
-				FlipCoin_Result[result$((i+1))]="Tail"
-		fi
+		case $ch in
+				1)
+					coins=1
+					flipCoin
+					;;
+				2)
+					coins=2
+					flipCoin
+					;;
+				*)
+					echo "Enter Valid choice"
+					;;
+		esac
+		read -p  "Do You Want to Play if yes then press 'y' else press any other key" play
 	done
 }
 
-
-#Function for calculate the percentage of coin flipping
-function calc_Percentage()
+#Function to flip the coins
+function flipCoin()
 {
-	for occure in ${FlipCoin_Result[@]}
+	key=""
+
+	#declare the dictionary
+	declare -A FlipCoin_Result
+
+	for((i=1;i<=noOfFlip;i++))
 	do
-		if [ $occure == "Head" ]
-		then
-				((head++))
-		else
-				((tail++))
-		fi
+		for((j=1;j<=coins;j++))
+		do
+				if (( $((RANDOM%2==0)) ))
+				then
+						key+=H
+				else
+						key+=T
+				fi
+		done
+		FlipCoin_Result[$key]=$((${FlipCoin_Result[$key]}+1))
+		key=""
 	done
+	echo ${!FlipCoin_Result[@]}
+	echo ${FlipCoin_Result[@]}
 
-	echo "Head Occure "$head" times"
-	echo "Tail Occure "$tail" time"
-
-	percentageOfHead=$(echo "scale=2; $head * 100 / $time" | bc)
-	percentageOfTail=$(echo "scale=2; $tail * 100 / $time" | bc)
-
-	echo "Percentage of Head is: $percentageOfHead"
-	echo "Percentage of Tail is: $percentageOfTail"
+	Calculate_Percentage
 }
 
-#Function calling
-flipACoin
-echo "All Occuerence of Coins: "${FlipCoin_Result[@]}
-calc_Percentage
+#Function for calculate the percentage of occuerence of coin
+function Calculate_Percentage()
+{
+	for key in ${!FlipCoin_Result[@]}
+	do
+			FlipCoin_Result[$key]=$((${FlipCoin_Result[$key]} * 100 / $noOfFlip))
+	done
+
+	echo ${!FlipCoin_Result[@]}
+	echo ${FlipCoin_Result[@]}
+}
+
+#Function call for start the program
+getInput
+
+
+
