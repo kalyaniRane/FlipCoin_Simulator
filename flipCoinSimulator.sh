@@ -11,7 +11,7 @@ function getInput()
 	while [ $play == 'y' ]
 	do
 		read -p "Enter how many times you want to flip a coin: " noOfFlip
-		echo -e "1.One Coin \n2.Two Coin"
+		echo -e "1.One Coin \n2.Two Coin \n3.Three Coin"
 		read -p "Enter your choice: " ch
 
 		case $ch in
@@ -21,6 +21,10 @@ function getInput()
 					;;
 				2)
 					coins=2
+					flipCoin
+					;;
+				3)
+					coins=3
 					flipCoin
 					;;
 				*)
