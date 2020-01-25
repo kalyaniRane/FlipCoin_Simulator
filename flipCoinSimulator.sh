@@ -1,13 +1,11 @@
-#!/bin/bash 
+#!/bin/bash -x 
 
 echo "Welcome to Flip Coin Simulator"
-
 
 #Function to get the input from user
 function getInput()
 {
-	local play=0
-	read -p  "Do You Want to Play if yes then press 'Y' else press any other key" play
+	read -p  "Do You Want to Play if yes then press 'y' else press any other key: " play
 	while [ $play == 'y' ]
 	do
 		read -p "Enter how many times you want to flip a coin: " noOfFlip
@@ -31,7 +29,7 @@ function getInput()
 					echo "Enter Valid choice"
 					;;
 		esac
-		read -p  "Do You Want to Play if yes then press 'y' else press any other key" play
+		read -p  "Do You Want to continue[y/n]: " play
 	done
 }
 
@@ -57,22 +55,36 @@ function flipCoin()
 		FlipCoin_Result[$key]=$((${FlipCoin_Result[$key]}+1))
 		key=""
 	done
-	echo ${!FlipCoin_Result[@]}
-	echo ${FlipCoin_Result[@]}
+	echo "All Key of Dictionary: "${!FlipCoin_Result[@]}
+	echo "All Occuerence of FlipCoin in Dictionary: "${FlipCoin_Result[@]}
 
-	Calculate_Percentage
+	#function call for calculating percentage
+	calculate_Percentage
 }
 
 #Function for calculate the percentage of occuerence of coin
-function Calculate_Percentage()
+function calculate_Percentage()
 {
 	for key in ${!FlipCoin_Result[@]}
 	do
-			FlipCoin_Result[$key]=$((${FlipCoin_Result[$key]} * 100 / $noOfFlip))
+			FlipCoin_Result[$key]=$(echo "scale=2; ${FlipCoin_Result[$key]} * 100 / $noOfFlip" | bc )
 	done
 
-	echo ${!FlipCoin_Result[@]}
-	echo ${FlipCoin_Result[@]}
+	echo "All Key: "${!FlipCoin_Result[@]}
+	echo "Percentage of all occurence of FlipCoin: "${FlipCoin_Result[@]}
+
+	#function call for sort dictionary and find winner
+	sort_FlipCoinDict
+}
+
+#Function to sort dictionary and display the higher element of dictionary
+function sort_FlipCoinDict()
+{
+	echo "Winner is:"
+	for i in "${!FlipCoin_Result[@]}"
+	do
+			echo -e $i ${FlipCoin_Result[$i]}
+	done | sort -k2 -rn | head -1
 }
 
 #Function call for start the program
